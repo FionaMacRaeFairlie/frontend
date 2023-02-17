@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
-
+import datasource from "./components/data.js";
+import { useEffect, useState, useCallback } from "react";
+import Search from "./components/Search";
+ 
 function App() {
-  return (
+  const [ entryList, setEntryList ] = useState([{
+    "subject": "",
+    "contents": "",
+    "author": "",
+    "published": ""
+  }]);
+
+  const fetchData = useCallback(() => {
+      fetch(datasource.baseURL, {
+       method: "GET",
+       headers: datasource.headers,
+     }).then((response) => response.json())
+       .then((data) => {
+           console.log(data);
+         const datalist = data;
+          setEntryList(datalist);
+       })
+       .catch((err) => {
+         console.log(err);
+       });
+   }, []);
+ 
+   useEffect(() => {
+     fetchData();
+   }, [fetchData]);
+
+   
+ return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+     <Search details={entryList}/>
     </div>
   );
 }
 
+ 
 export default App;
